@@ -1,0 +1,481 @@
+<<<<<<< HEAD
+// Missing: clickable links
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #9BFD7F, #5DFF30);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: #000000;
+            padding: 20px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+        #chatbox {
+            width: 95%;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 15px;
+            background: #656565;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+        .user {
+            background: linear-gradient(135deg, #656565, #000);
+            color: white;
+            padding: 10px;
+            border-radius: 15px 15px 0px 15px;
+            max-width: 70%;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .bot {
+            background: linear-gradient(135deg, #9BFD7F, #5DFF30);
+            color: white;
+            padding: 10px;
+            border-radius: 15px 15px 15px 0px;
+            max-width: 70%;
+            align-self: flex-start;
+        }
+        .feedback-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+        .feedback {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 5px;
+        }
+        #userInput {
+            width: calc(100% - 50px);
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #656565;
+            color: #fff;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        #userInput::placeholder {
+            color: #fff;
+            opacity: 0.7;
+        }
+        button {
+            padding: 12px;
+            background-color: #5DFF30;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+        }
+        button:hover {
+            background-color: #1e88e5;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        @media (max-width: 600px) {
+            #chat-container {
+                padding: 15px;
+            }
+            #chatbox {
+                height: 300px;
+            }
+            #userInput {
+                font-size: 14px;
+            }
+            button {
+                font-size: 18px;
+            }
+        }
+        li {
+            margin-top: 10px; /* Añade un espacio superior a cada item */
+        }
+	li:last-child {
+	    margin-bottom: 10px; /* Añade espacio después del último ítem */
+	}
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Nomad World GPT-Assistant</h1>
+        <div id="chatbox"></div>
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="userInput" placeholder="Type a message..." />
+            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        let debounceTimer;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('userInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        function addFeedbackButtons(responseId) {
+            return `
+                <div class="feedback-buttons">
+                    <button class="feedback" data-response-id="${responseId}" data-feedback="helpful">👍</button>
+                    <button class="feedback" data-response-id="${responseId}" data-feedback="not_helpful">👎</button>
+                </div>
+            `;
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('feedback')) {
+                const responseId = event.target.getAttribute('data-response-id');
+                const feedback = event.target.getAttribute('data-feedback');
+                // Aquí puedes enviar el feedback a tu backend para almacenarlo
+            }
+        });
+
+	function formatResponse(response) {
+
+	    // Formatear listas numeradas como <ol> y <li>
+	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+//	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+//	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+  
+	    // Si hay varias líneas <li>, envolver en una lista ordenada <ol>
+	    if (response.includes('<li>')) {
+	        response = '<ol>' + response + '</ol>';
+	    }
+
+	    return response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+	    return response;
+	}
+
+        function sendMessage() {
+	    console.log('sendMessage called'); // Debugging line
+            const userMessage = document.getElementById('userInput').value;
+            if (!userMessage.trim()) return; // Evitar mensajes vacíos
+            const chatbox = document.getElementById('chatbox');
+            
+            chatbox.innerHTML += `<div class="message"><div class="user">${userMessage}</div></div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => response.json())
+	        .then(data => {
+	            if (data.response) {
+	                const responseId = Date.now();
+	                const formattedResponse = formatResponse(data.response);
+	                chatbox.innerHTML += `<div class="message"><div class="bot">${formattedResponse}</div>${addFeedbackButtons(responseId)}</div>`;
+	            } else {
+	                chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
+	            }
+	            chatbox.scrollTop = chatbox.scrollHeight;
+	        })
+/*                .then(data => {
+                    if (data.response) {
+                        const responseId = Date.now(); // O cualquier otro método para identificar la respuesta
+                        chatbox.innerHTML += `<div class="message"><div class="bot">${data.response}</div>${addFeedbackButtons(responseId)}</div>`;
+                    } else {
+                        chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
+                    }
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                })         */
+                .catch(error => {
+                    chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${error}</div></div>`;
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                });
+
+                document.getElementById('userInput').value = ''; // Limpiar el campo de entrada
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+=======
+// Missing: clickable links
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #9BFD7F, #5DFF30);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            width: 100%;
+            max-width: 600px;
+            background: #000000;
+            padding: 20px;
+            box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin-bottom: 20px;
+        }
+        #chatbox {
+            width: 95%;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 15px;
+            background: #656565;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        .message {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: flex-end;
+        }
+        .user {
+            background: linear-gradient(135deg, #656565, #000);
+            color: white;
+            padding: 10px;
+            border-radius: 15px 15px 0px 15px;
+            max-width: 70%;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .bot {
+            background: linear-gradient(135deg, #9BFD7F, #5DFF30);
+            color: white;
+            padding: 10px;
+            border-radius: 15px 15px 15px 0px;
+            max-width: 70%;
+            align-self: flex-start;
+        }
+        .feedback-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+        }
+        .feedback {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 5px;
+        }
+        #userInput {
+            width: calc(100% - 50px);
+            padding: 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #656565;
+            color: #fff;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        #userInput::placeholder {
+            color: #fff;
+            opacity: 0.7;
+        }
+        button {
+            padding: 12px;
+            background-color: #5DFF30;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            margin-left: 10px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+        }
+        button:hover {
+            background-color: #1e88e5;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        @media (max-width: 600px) {
+            #chat-container {
+                padding: 15px;
+            }
+            #chatbox {
+                height: 300px;
+            }
+            #userInput {
+                font-size: 14px;
+            }
+            button {
+                font-size: 18px;
+            }
+        }
+        li {
+            margin-top: 10px; /* Añade un espacio superior a cada item */
+        }
+	li:last-child {
+	    margin-bottom: 10px; /* Añade espacio después del último ítem */
+	}
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <h1>Nomad World GPT-Assistant</h1>
+        <div id="chatbox"></div>
+        <div style="display: flex; align-items: center;">
+            <input type="text" id="userInput" placeholder="Type a message..." />
+            <button id="sendBtn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <script>
+        let debounceTimer;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById('sendBtn').addEventListener('click', sendMessage);
+            document.getElementById('userInput').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+        });
+
+        function addFeedbackButtons(responseId) {
+            return `
+                <div class="feedback-buttons">
+                    <button class="feedback" data-response-id="${responseId}" data-feedback="helpful">👍</button>
+                    <button class="feedback" data-response-id="${responseId}" data-feedback="not_helpful">👎</button>
+                </div>
+            `;
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList.contains('feedback')) {
+                const responseId = event.target.getAttribute('data-response-id');
+                const feedback = event.target.getAttribute('data-feedback');
+                // Aquí puedes enviar el feedback a tu backend para almacenarlo
+            }
+        });
+
+	function formatResponse(response) {
+
+	    // Formatear listas numeradas como <ol> y <li>
+	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+//	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+//	    response = response.replace(/(\d+)\. ([^0-9]+)/g, '<li>$2</li>');
+  
+	    // Si hay varias líneas <li>, envolver en una lista ordenada <ol>
+	    if (response.includes('<li>')) {
+	        response = '<ol>' + response + '</ol>';
+	    }
+
+	    return response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+	    return response;
+	}
+
+        function sendMessage() {
+	    console.log('sendMessage called'); // Debugging line
+            const userMessage = document.getElementById('userInput').value;
+            if (!userMessage.trim()) return; // Evitar mensajes vacíos
+            const chatbox = document.getElementById('chatbox');
+            
+            chatbox.innerHTML += `<div class="message"><div class="user">${userMessage}</div></div>`;
+            chatbox.scrollTop = chatbox.scrollHeight;
+
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
+                })
+                .then(response => response.json())
+	        .then(data => {
+	            if (data.response) {
+	                const responseId = Date.now();
+	                const formattedResponse = formatResponse(data.response);
+	                chatbox.innerHTML += `<div class="message"><div class="bot">${formattedResponse}</div>${addFeedbackButtons(responseId)}</div>`;
+	            } else {
+	                chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
+	            }
+	            chatbox.scrollTop = chatbox.scrollHeight;
+	        })
+/*                .then(data => {
+                    if (data.response) {
+                        const responseId = Date.now(); // O cualquier otro método para identificar la respuesta
+                        chatbox.innerHTML += `<div class="message"><div class="bot">${data.response}</div>${addFeedbackButtons(responseId)}</div>`;
+                    } else {
+                        chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
+                    }
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                })         */
+                .catch(error => {
+                    chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${error}</div></div>`;
+                    chatbox.scrollTop = chatbox.scrollHeight;
+                });
+
+                document.getElementById('userInput').value = ''; // Limpiar el campo de entrada
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
+>>>>>>> 3d3e351259782c4428ad866970c0837d745283bc
