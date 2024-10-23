@@ -1,4 +1,3 @@
-// Missing: clickable links
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -184,6 +183,8 @@
 	    if (response.includes('<li>')) {
 	        response = '<ol>' + response + '</ol>';
 	    }
+
+// Missing: clickable links
 
 	    return response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
