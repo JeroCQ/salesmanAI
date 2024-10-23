@@ -35,6 +35,7 @@
             width: 95%;
             height: 150px; #150 for pc
             overflow-y: auto;
+	    overflow-x: hidden; /* Prevent horizontal overflow */
             border: 1px solid #ccc;
             padding: 24px;
             background: #656565;
@@ -46,6 +47,8 @@
             display: flex;
             margin-bottom: 10px;
             align-items: flex-end;
+	    word-wrap: break-word; /* Forces long words to break */
+	    white-space: pre-wrap; /* Preserves spaces and line breaks */
         }
         .user {
             background: linear-gradient(135deg, #656565, #000);
@@ -217,15 +220,6 @@
 	            }
 	            chatbox.scrollTop = chatbox.scrollHeight;
 	        })
-/*                .then(data => {
-                    if (data.response) {
-                        const responseId = Date.now(); // O cualquier otro método para identificar la respuesta
-                        chatbox.innerHTML += `<div class="message"><div class="bot">${data.response}</div>${addFeedbackButtons(responseId)}</div>`;
-                    } else {
-                        chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
-                    }
-                    chatbox.scrollTop = chatbox.scrollHeight;
-                })         */
                 .catch(error => {
                     chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${error}</div></div>`;
                     chatbox.scrollTop = chatbox.scrollHeight;
