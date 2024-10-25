@@ -121,9 +121,14 @@
         @media (max-width: 600px) {
             #chat-container {
                 padding: 15px;
+        	width: 100%;
+	        overflow-x: hidden; /* Prevent horizontal scrolling */
             }
             #chatbox {
                 height: 300px;
+	        width: 100%; /* Ensure it fits within the container */
+        	max-width: 100%;
+	        overflow-x: hidden; /* Prevent horizontal overflow */
             }
             #userInput {
                 font-size: 14px;
