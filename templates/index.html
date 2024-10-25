@@ -202,6 +202,7 @@
 	            if (data.response) {
 	                const responseId = Date.now();
 	                const formattedResponse = formatResponse(data.response);
+			chatbox.innerHTML += `<div class="message"><div class="bot">${formattedResponse}</div></div>`;
 	            } else {
 	                chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
 	            }
