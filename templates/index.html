@@ -8,6 +8,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: 'Roboto', sans-serif;
             background: #000000;
@@ -20,11 +23,10 @@
         }
         #chat-container {
             width: 100%;
-            max-width: 100%;
+            max-width: 1000px;
             background: linear-gradient(135deg, #10f90a, #000000);
             padding: 20px;
 	    box-sizing: border-box;
-	    overflow-x: hidden;
             box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.1);
             border-radius: 10px;
         }
@@ -39,12 +41,11 @@
 	    max-width: 100%;
             height: 150px; #150 for pc
             overflow-y: auto;
-	    overflow-x: hidden; /* Prevent horizontal overflow */
             border: 1px solid #ccc;
             padding: 24px;
             background: #656565;
             border-radius: 10px;
-            margin-bottom: 15px;
+            margin: 0 auto 15px auto;
             font-size: 14px;
         }
         .message {
@@ -70,18 +71,6 @@
             border-radius: 15px 15px 15px 0px;
             max-width: 70%;
             align-self: flex-start;
-        }
-        .feedback-buttons {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 5px;
-        }
-        .feedback {
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            margin-left: 5px;
         }
         #userInput {
             width: calc(100% - 50px);
@@ -128,7 +117,7 @@
                 height: 300px;
 	        width: 100%; /* Ensure it fits within the container */
         	max-width: 100%;
-	        overflow-x: hidden; /* Prevent horizontal overflow */
+	        margin: 0 auto; /* Prevent horizontal overflow */
             }
             #userInput {
                 font-size: 14px;
@@ -166,15 +155,6 @@
                 }
             });
         });
-
-        function addFeedbackButtons(responseId) {
-            return `
-                <div class="feedback-buttons">
-                    <button class="feedback" data-response-id="${responseId}" data-feedback="helpful">👍</button>
-                    <button class="feedback" data-response-id="${responseId}" data-feedback="not_helpful">👎</button>
-                </div>
-            `;
-        }
 
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('feedback')) {
@@ -223,7 +203,6 @@
 	            if (data.response) {
 	                const responseId = Date.now();
 	                const formattedResponse = formatResponse(data.response);
-	                chatbox.innerHTML += `<div class="message"><div class="bot">${formattedResponse}</div>${addFeedbackButtons(responseId)}</div>`;
 	            } else {
 	                chatbox.innerHTML += `<div class="message"><div class="bot">Error: ${data.error}</div></div>`;
 	            }
