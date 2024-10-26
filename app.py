@@ -58,18 +58,6 @@ def get_response(user_input):
     else:
         return openai_response(user_input)
 
-#Language detect
-from langdetect import detect
-
-def tag_message_language(message):
-    language = detect(message)
-    if language == 'es':
-        return f"{message} (lang:es)"
-    elif language == 'en':
-        return f"{message} (lang:en)"
-    else:
-        return message  # or a default language tag
-
 
 # simulated responses
 def simulated_openai_response(user_input):
@@ -135,13 +123,13 @@ def openai_response(user_input):
 	    )},
 
             # Sample dialogue
-            {"role": "user", "content": "What tours do you offer? (lang:en)"},
+            {"role": "user", "content": "What tours do you offer?"},
             {"role": "assistant", "content": "Currently, we offer the History Walk, Mindfulness Under the Waterfall, Vegetarian Street Food Expedition, and Vegan Survival Mode tours."},
-	    {"role": "user", "content": "¡Hola! ¿Qué tours ofrecen? (lang:es)"},
+	    {"role": "user", "content": "¡Hola! ¿Qué tours ofrecen?"},
 	    {"role": "assistant", "content": "¡Hola! Ofrecemos cuatro tours principales: Historia, Mindfulness en la Cascada, Expedición de Comida Callejera Vegetariana, y Modo de Supervivencia Vegano."},
 
 
-            {"role": "user", "content": "hi (lang:en)"},
+            {"role": "user", "content": "hi"},
             {"role": "assistant", "content": "Welcome to Nomad World! My name is Xander Supertramp. May I have your name to make this conversation more personalized?"},
 
             {"role": "user", "content": user_input}  # real user's question
